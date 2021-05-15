@@ -31,34 +31,57 @@ class Album {
     }
 }
 
-var select = document.getElementById("selectNumber"); 
-var options = ["1", "2", "3", "4", "5"]; 
-
-for(var i = 0; i < options.length; i++) {
-    var opt = options[i];
-
-    var el = document.createElement("option");
-    el.text = opt;
-    el.value = opt;
-
-    select.add(el);
-}​
-
 var jbox = new Jukebox();
-const album1 = new Album('Operation Ivy', 'Energy');
-const album2 = new Album('Blink 182', 'Dude Ranch');
-const album3 = new Album('New Found Glory', 'Sticks and Stones');
 
-jbox.addAlbum(album1);
-jbox.addAlbum(album2);
-jbox.addAlbum(album3);
+// STORE ARTISTS/ALBUMS WITHIN AN ARRAY
+var artistAlbums = [
+    { band: 'Operation Ivy', album: 'Energy'},
+    { band: 'Blink 182', album: 'Dude Ranch'},
+    { band: 'New Found Glory', album: 'Sticks and Stones'},
+    { band: 'Red Hot Chilli Peppers', album: 'Californication'},
+    { band: 'Oasis', album: 'Morning Glory?'}
+];
 
-album1.play();
-album2.play();
-album2.play();
-album2.play();
-album2.play();
-album2.play();
-album3.play();
+// BIND ARRAY TO DROP DOWN MENU
+window.onload = function() {
+    for(let i = 0;i<artistAlbums.length;i++){
+        let option = document.createElement("option");
+        option.text = artistAlbums[i].band +', ' + artistAlbums[i].album;
+        option.value = i;
+        let select = document.getElementById("artistandalbum");
+        select.appendChild(option);
+    }
+};
 
-console.log(`Your favorite album is: ${jbox.favoriteAlbum()}`);
+// Iterate through the array and programmatically create new Album class instances based on each album within the array 
+for(let i = 0;i<artistAlbums.length;i++) {
+    let albumInstance = 'album' + i;
+    albumInstance = new Album(artistAlbums[i].band,artistAlbums[i].album);
+
+    // Add Album class instance to the player
+    jbox.addAlbum(albumInstance);
+}
+
+const $ = function (id) {
+    return document.getElementById(id);
+};
+
+const displayFavorite = function () {
+    $('favoriteAlbum').innerHTML = `Your favorite album is: ${jbox.favoriteAlbum()}`;
+};
+
+const playSelection = function () {
+    let selectedAlbum = $('artistandalbum');
+    let albumNumber = selectedAlbum.value;
+    let albumClass = 'album' + `${albumNumber}`;
+    albumClass.play(); 
+
+};
+
+// When the user selects an artist/album from the drop down menu and clicks the play button, the play() method should be called for that album. This will track that album as being played.
+window.addEventListener('click', () => {
+    $('Play_Selection').onclick = playSelection;
+    $('Show_Favorite').onclick = displayFavorite;
+    
+});
+
